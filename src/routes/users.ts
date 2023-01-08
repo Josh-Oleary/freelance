@@ -1,3 +1,4 @@
+import Profile from '../Classes/Profile.js';
 import express, { Request, Response, Router } from 'express'
 import { UserPayload, User } from '../Classes/Users.js';
 
@@ -5,9 +6,9 @@ const router: Router = express.Router()
 // Create user
 router.post('/', async (req: Request, res: Response) => {
     try {
-        let payload: UserPayload = req.body
+        const payload: UserPayload = req.body
         const user = new User()
-        const userResult = await user.createUser(payload)
+        const userResult = await user.create(payload)
         res.status(userResult.statusCode).json(userResult.data)
 
     } catch (error) {
@@ -25,7 +26,7 @@ router.put('/:id', async (req: Request, res: Response) => {
         const userID: string = req.params.id
         const user = new User()
         const payload = req.body
-        const updatedUser = await user.updateUser(userID, payload)
+        const updatedUser = await user.update(userID, payload)
         res.status(updatedUser.statusCode).json(updatedUser.data)
 
     } catch (error) {
@@ -39,24 +40,23 @@ router.delete('/:id', async (req: Request, res: Response) => {
     try {
         const userID: string = req.params.id
         const user = new User()
-        const deletedUser = await user.deleteUser(userID)
-        res.status(deletedUser.statusCode).send(deletedUser.data)
+        const deletedUser = await user.delete(userID)
+        res.status(deletedUser.statusCode).json(deletedUser.data)
     } catch (error) {
         console.error(error)
-        res.status(500).send(error)
+        res.status(500).json(error)
     }
 })
-// Get user by id
+// Retrieve user
 router.get('/:id', async (req: Request, res: Response) => {
     try {
         const userID: string = req.params.id
         const user = new User()
-        console.log('USER ID: ', userID)
-        const userData = await user.fetchSingleUser(userID)
-        res.status(userData.statusCode).send(userData.data)
+        const userData = await user.fetchOne(userID)
+        res.status(userData.statusCode).json(userData.data)
     } catch (error) {
         console.error(error)
-        res.status(500).send(error)
+        res.status(500).json(error)
     }
 })
 
@@ -64,11 +64,11 @@ router.get('/:id', async (req: Request, res: Response) => {
 router.get('/', async (req: Request, res: Response) => {
     try {
         const user = new User()
-        const users = await user.fetchUsers()
-        res.status(users.statusCode).send(users.data)
+        const users = await user.fetchMany()
+        res.status(users.statusCode).json(users.data)
     } catch (error) {
         console.error(error)
-        res.status(500).send(error)
+        res.status(500).json(error)
     }
 })
 

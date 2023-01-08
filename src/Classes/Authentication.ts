@@ -4,8 +4,8 @@ import { ObjectID } from 'bson'
 
 
 interface AuthData {
-    hash: string
-    salt: string
+    hash?: string
+    salt?: string
     error?: any
 }
 
@@ -13,7 +13,7 @@ class Auth {
 
     constructor () {}
 
-    setPassword(password: any): AuthData | undefined {
+    setPassword(password: any): AuthData {
         try {
             const salt = crypto.randomBytes(16).toString('hex')
     
@@ -25,6 +25,10 @@ class Auth {
             return passwordData
         } catch (error) {
             console.error(error)
+            return {
+                hash: '',
+                salt: ''
+            }
         }
     }
 

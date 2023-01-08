@@ -13,9 +13,9 @@ const router = express.Router();
 // Create user
 router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let payload = req.body;
+        const payload = req.body;
         const user = new User();
-        const userResult = yield user.createUser(payload);
+        const userResult = yield user.create(payload);
         res.status(userResult.statusCode).json(userResult.data);
     }
     catch (error) {
@@ -32,7 +32,7 @@ router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const userID = req.params.id;
         const user = new User();
         const payload = req.body;
-        const updatedUser = yield user.updateUser(userID, payload);
+        const updatedUser = yield user.update(userID, payload);
         res.status(updatedUser.statusCode).json(updatedUser.data);
     }
     catch (error) {
@@ -45,38 +45,37 @@ router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     try {
         const userID = req.params.id;
         const user = new User();
-        const deletedUser = yield user.deleteUser(userID);
-        res.status(deletedUser.statusCode).send(deletedUser.data);
+        const deletedUser = yield user.delete(userID);
+        res.status(deletedUser.statusCode).json(deletedUser.data);
     }
     catch (error) {
         console.error(error);
-        res.status(500).send(error);
+        res.status(500).json(error);
     }
 }));
-// Get user by id
+// Retrieve user
 router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userID = req.params.id;
         const user = new User();
-        console.log('USER ID: ', userID);
-        const userData = yield user.fetchSingleUser(userID);
-        res.status(userData.statusCode).send(userData.data);
+        const userData = yield user.fetchOne(userID);
+        res.status(userData.statusCode).json(userData.data);
     }
     catch (error) {
         console.error(error);
-        res.status(500).send(error);
+        res.status(500).json(error);
     }
 }));
 // List users
 router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const user = new User();
-        const users = yield user.fetchUsers();
-        res.status(users.statusCode).send(users.data);
+        const users = yield user.fetchMany();
+        res.status(users.statusCode).json(users.data);
     }
     catch (error) {
         console.error(error);
-        res.status(500).send(error);
+        res.status(500).json(error);
     }
 }));
 export default router;

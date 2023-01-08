@@ -18,18 +18,19 @@ class User extends Auth {
         this.client = this.db.client;
         this.users = this.client.db().collection(this.collection);
     }
-    createUser(data) {
+    create(data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let doc = data;
-                const { hash, salt } = this.setPassword(doc.password);
+                const passData = this.setPassword(doc.password);
+                const { hash, salt } = passData;
                 doc.hash = hash;
                 doc.salt = salt;
                 doc.createdAt = new Date().toISOString();
                 delete doc.password;
                 if (!doc.password) {
                     const newUser = yield this.users.insertOne(doc);
-                    console.log('New User: ', newUser);
+                    this.users.updateOne({ _id: newUser.insertedId }, { _user: newUser.insertedId });
                     return {
                         statusCode: 201,
                         data: newUser
@@ -52,7 +53,7 @@ class User extends Auth {
             }
         });
     }
-    updateUser(userID, data) {
+    update(userID, data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const id = new ObjectID(userID);
@@ -62,7 +63,7 @@ class User extends Auth {
                 yield this.users.updateOne(filter, doc);
                 const user = yield this.users.findOne(filter);
                 return {
-                    statusCode: 200,
+                    statusCode: 201,
                     data: user
                 };
             }
@@ -77,17 +78,11 @@ class User extends Auth {
             }
         });
     }
-    fetchUsers() {
+    fetchMany() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const cursor = this.users.find();
-                const users = [];
-                if ((yield cursor.count()) === 0) {
-                    console.warn('No User Documents Found');
-                }
-                yield cursor.forEach((c) => {
-                    users.push(c);
-                });
+                const users = yield cursor.toArray();
                 return {
                     statusCode: 200,
                     data: users
@@ -104,7 +99,7 @@ class User extends Auth {
             }
         });
     }
-    fetchSingleUser(userID) {
+    fetchOne(userID) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const id = new ObjectID(userID);
@@ -126,7 +121,7 @@ class User extends Auth {
             }
         });
     }
-    deleteUser(userID) {
+    delete(userID) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const id = new ObjectID(userID);
@@ -154,7 +149,7 @@ class User extends Auth {
             }
         });
     }
-    validateUser(username, password) {
+    validate(username, password) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const filter = { email: username };

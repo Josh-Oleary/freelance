@@ -8,12 +8,71 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import express from 'express';
+import Profile from '../Classes/Profile.js';
 const router = express.Router();
 // Create profile
-router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let payload = ;
+        const userID = req.params.id;
+        const payload = req.body;
+        const profile = new Profile();
+        const response = yield profile.create(userID, payload);
+        res.status(response.statusCode).json(response.data);
     }
-    finally {
+    catch (error) {
+        console.error(error);
+        res.status(500).json(error);
     }
 }));
+// Edit profile
+router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const payload = req.body;
+        const userID = req.params.id;
+        const profile = new Profile();
+        const response = yield profile.update(userID, payload);
+        res.status(response.statusCode).json(response.data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
+}));
+// List profiles
+router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const profile = new Profile();
+        const response = yield profile.fetchMany();
+        res.status(response.statusCode).json(response.data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
+}));
+// Retrieve profile
+router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userID = req.params.id;
+        const profile = new Profile();
+        const response = yield profile.fetchOne(userID);
+        res.status(response.statusCode).json(response.data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
+}));
+router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const userID = req.params.id;
+        const profile = new Profile();
+        const response = yield profile.delete(userID);
+        res.status(response.statusCode).json(response.data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
+}));
+export default router;

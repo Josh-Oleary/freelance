@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { MongoClient } from 'mongodb';
 class DB {
-    constructor(collectionName) {
+    constructor(collectionName = undefined) {
         this.url = 'mongodb://localhost:27017';
         this.client = new MongoClient(this.url);
         this.dbName = 'freelance';

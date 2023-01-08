@@ -10,6 +10,10 @@ class Auth {
         }
         catch (error) {
             console.error(error);
+            return {
+                hash: '',
+                salt: ''
+            };
         }
     }
     validatePassword(password, salt, hash) {

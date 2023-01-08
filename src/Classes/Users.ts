@@ -1,8 +1,9 @@
 import DB from './db.js'
 import { ObjectID } from 'bson'
 import { AuthData, Auth }from './Authentication.js'
+import Profile from './Profile.js'
 
-interface APIResponse {
+export interface APIResponse {
     statusCode: number
     data: any
 }
@@ -23,13 +24,14 @@ interface UserPayload {
     reviews?: object[];
     email: string;
     password?: string
-    hash: string
-    salt: string
+    hash: string | undefined
+    salt: string | undefined
     userType: 'employer' | 'employee' | 'agency' | 'admin';
 }
 
-type UserSearchFilter = {
-    _id: object
+export type UserSearchFilter = {
+    _id?: object
+    _user?: object
 }
 
 class User extends Auth {
@@ -42,17 +44,21 @@ class User extends Auth {
         super()
     }
 
-    async createUser (data: UserPayload): Promise<APIResponse> {  
+    async create (data: UserPayload): Promise<APIResponse> {  
         try {
             let doc = data
-            const { hash, salt } = this.setPassword(doc.password)
+            const passData = this.setPassword(doc.password)
+            const { hash, salt } = passData
             doc.hash = hash
             doc.salt = salt
             doc.createdAt = new Date().toISOString()
             delete doc.password
             if (!doc.password) {
                 const newUser = await this.users.insertOne(doc)
-                console.log('New User: ', newUser)
+                this.users.updateOne(
+                    { _id: newUser.insertedId }, 
+                    { _user: newUser.insertedId }
+                    )
                 return {
                     statusCode: 201,
                     data: newUser
@@ -73,7 +79,7 @@ class User extends Auth {
         }
     }
 
-    async updateUser (userID: string, data: any): Promise<APIResponse> {
+    async update (userID: string, data: any): Promise<APIResponse> {
         try {
             const id = new ObjectID(userID)
             data.updatedAt = new Date().toISOString()
@@ -82,7 +88,7 @@ class User extends Auth {
             await this.users.updateOne(filter, doc)
             const user = await this.users.findOne(filter)
             return {
-                statusCode: 200,
+                statusCode: 201,
                 data: user
 
             }
@@ -96,18 +102,10 @@ class User extends Auth {
         }
     }
 
-    async fetchUsers (): Promise<APIResponse>  {
+    async fetchMany (): Promise<APIResponse>  {
         try {
             const cursor = this.users.find()
-            const users: object[] = []
-            
-            if ((await cursor.count()) === 0) {
-                console.warn('No User Documents Found')
-            }
-
-            await cursor.forEach((c) => {
-                users.push(c)
-            })
+            const users = await cursor.toArray()
 
             return {
                 statusCode: 200,
@@ -124,7 +122,7 @@ class User extends Auth {
         }
     }
 
-    async fetchSingleUser (userID: string): Promise<APIResponse>  {
+    async fetchOne (userID: string): Promise<APIResponse>  {
         try {
             const id = new ObjectID(userID)
             const filter = { _id: id }
@@ -144,7 +142,7 @@ class User extends Auth {
         }
     }
 
-    async deleteUser (userID: string): Promise<APIResponse>  {
+    async delete (userID: string): Promise<APIResponse>  {
         try {
             const id = new ObjectID(userID)
             const doc = { _id: id}
@@ -171,7 +169,7 @@ class User extends Auth {
         }
     }
 
-    async validateUser (username: string, password: string): Promise<APIResponse> {
+    async validate (username: string, password: string): Promise<APIResponse> {
         try {
             const filter = { email: username }
             const user = await this.users.findOne(filter)

@@ -7,31 +7,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import DB from './db.js';
 import { ObjectID } from 'bson';
-import API from './API.js';
-// export interface ProfileResult {
-//     statusCode: number
-//     data?: any | undefined
-// }
-class Profile extends API {
-    // collection = 'profiles'
-    // db = new DB(this.collection)
-    // client = this.db.client
-    // profiles = this.client.db().collection(this.collection)
-    constructor() {
-        super('profiles');
+class Job {
+    constructor(userID = undefined) {
+        this.collection = 'jobs';
+        this.db = new DB(this.collection);
+        this.client = this.db.client;
+        this.jobs = this.client.db().collection(this.collection);
+        this.userID = userID;
     }
-    create(userID, data) {
+    create(data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 let doc = data;
-                doc._user = new ObjectID(userID);
+                doc._user = new ObjectID(this.userID);
                 doc.createdAt = new Date().toISOString();
-                const newProfile = yield this.api.insertOne(doc);
-                console.log('New Profile: ', newProfile);
+                doc.status = 'review';
+                const newJob = yield this.jobs.insertOne(doc);
                 return {
                     statusCode: 201,
-                    data: newProfile
+                    data: newJob
                 };
             }
             catch (error) {
@@ -41,10 +37,23 @@ class Profile extends API {
                     data: error
                 };
             }
-            finally {
-                this.db.close();
-            }
+        });
+    }
+    update() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    fetch() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    fetchOne() {
+        return __awaiter(this, void 0, void 0, function* () {
+        });
+    }
+    deleteOne() {
+        return __awaiter(this, void 0, void 0, function* () {
         });
     }
 }
-export default Profile;
+export default Job;

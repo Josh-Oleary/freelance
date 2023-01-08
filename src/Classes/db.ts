@@ -4,9 +4,9 @@ class DB {
     url: string = 'mongodb://localhost:27017'
     client: MongoClient = new MongoClient(this.url)
     dbName: string = 'freelance'
-    collection: string
+    collection: string | undefined
 
-    constructor (collectionName: string) {
+    constructor (collectionName: string | undefined = undefined) {
         this.collection = collectionName
     }
 

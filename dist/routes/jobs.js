@@ -8,12 +8,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import express from 'express';
-import { User } from '../Classes/Users.js';
+import Job from '../Classes/Job.js';
 const router = express.Router();
-router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
-    const user = new User();
-    const { statusCode, data } = yield user.validate(email, password);
-    res.status(statusCode).json(data);
+// Create job
+router.post('/jobs', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const payload = req.body;
+        const job = new Job();
+        const response = yield job.create(payload);
+        res.status(response.statusCode).json(response.data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
 }));
-export default router;
+// Update job
+// Delete job
+// Retrieve job
+// List jobs
