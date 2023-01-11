@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import express from 'express';
 import Profile from '../Classes/Profile.js';
 const router = express.Router();
+/* eslint-disable @typescript-eslint/no-misused-promises */
 // Create profile
 router.post('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -28,9 +29,9 @@ router.post('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const payload = req.body;
-        const userID = req.params.id;
+        const id = req.params.id;
         const profile = new Profile();
-        const response = yield profile.update(userID, payload);
+        const response = yield profile.update(id, payload);
         res.status(response.statusCode).json(response.data);
     }
     catch (error) {
@@ -53,9 +54,9 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 // Retrieve profile
 router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const userID = req.params.id;
+        const id = req.params.id;
         const profile = new Profile();
-        const response = yield profile.fetchOne(userID);
+        const response = yield profile.fetchOne(id);
         res.status(response.statusCode).json(response.data);
     }
     catch (error) {
@@ -65,9 +66,9 @@ router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 }));
 router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const userID = req.params.id;
+        const id = req.params.id;
         const profile = new Profile();
-        const response = yield profile.delete(userID);
+        const response = yield profile.delete(id);
         res.status(response.statusCode).json(response.data);
     }
     catch (error) {
@@ -75,4 +76,5 @@ router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(500).json(error);
     }
 }));
+/* eslint-disable @typescript-eslint/no-misused-promises */
 export default router;

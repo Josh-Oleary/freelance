@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import express from 'express';
 import { User } from '../Classes/Users.js';
+/* eslint-disable @typescript-eslint/no-misused-promises */
 const router = express.Router();
 // Create user
 router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -21,8 +22,8 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     catch (error) {
         console.error(error);
         res.status(500).json({
-            'Message': 'User not created',
-            'Error': error
+            Message: 'User not created',
+            Error: error
         });
     }
 }));
@@ -78,4 +79,5 @@ router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).json(error);
     }
 }));
+/* eslint-disable @typescript-eslint/no-misused-promises */
 export default router;

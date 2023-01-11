@@ -30,7 +30,10 @@ class DB {
     }
     close() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.client.close();
+            this.client.close()
+                .catch((error) => {
+                console.error(error);
+            });
         });
     }
 }

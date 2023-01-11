@@ -1,4 +1,4 @@
 class Profile {
-    constructor(user) { }
+  constructor (user) { }
 }
-export {};
+export {}

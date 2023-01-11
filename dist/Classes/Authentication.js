@@ -1,11 +1,10 @@
 import crypto from 'crypto';
 class Auth {
-    constructor() { }
     setPassword(password) {
         try {
             const salt = crypto.randomBytes(16).toString('hex');
             const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-            const passwordData = { hash: hash, salt: salt };
+            const passwordData = { hash, salt };
             return passwordData;
         }
         catch (error) {

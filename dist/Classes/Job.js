@@ -7,24 +7,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import DB from './db.js';
 import { ObjectID } from 'bson';
-class Job {
-    constructor(userID = undefined) {
-        this.collection = 'jobs';
-        this.db = new DB(this.collection);
-        this.client = this.db.client;
-        this.jobs = this.client.db().collection(this.collection);
-        this.userID = userID;
+import API from './API.js';
+class Job extends API {
+    constructor() {
+        super('jobs');
     }
-    create(data) {
+    create(userID, data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let doc = data;
-                doc._user = new ObjectID(this.userID);
+                const doc = data;
+                doc._user = new ObjectID(userID);
                 doc.createdAt = new Date().toISOString();
                 doc.status = 'review';
-                const newJob = yield this.jobs.insertOne(doc);
+                const newJob = yield this.api.insertOne(doc);
                 return {
                     statusCode: 201,
                     data: newJob
@@ -37,22 +33,6 @@ class Job {
                     data: error
                 };
             }
-        });
-    }
-    update() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
-    fetch() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
-    fetchOne() {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
-    deleteOne() {
-        return __awaiter(this, void 0, void 0, function* () {
         });
     }
 }

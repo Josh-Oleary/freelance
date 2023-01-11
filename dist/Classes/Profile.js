@@ -9,22 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { ObjectID } from 'bson';
 import API from './API.js';
-// export interface ProfileResult {
-//     statusCode: number
-//     data?: any | undefined
-// }
 class Profile extends API {
-    // collection = 'profiles'
-    // db = new DB(this.collection)
-    // client = this.db.client
-    // profiles = this.client.db().collection(this.collection)
     constructor() {
         super('profiles');
     }
     create(userID, data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let doc = data;
+                const doc = data;
                 doc._user = new ObjectID(userID);
                 doc.createdAt = new Date().toISOString();
                 const newProfile = yield this.api.insertOne(doc);
@@ -40,9 +32,6 @@ class Profile extends API {
                     statusCode: 500,
                     data: error
                 };
-            }
-            finally {
-                this.db.close();
             }
         });
     }

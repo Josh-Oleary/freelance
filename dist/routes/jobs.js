@@ -10,12 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import express from 'express';
 import Job from '../Classes/Job.js';
 const router = express.Router();
+/* eslint-disable @typescript-eslint/no-misused-promises */
 // Create job
-router.post('/jobs', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const userID = req.params.id;
         const payload = req.body;
         const job = new Job();
-        const response = yield job.create(payload);
+        const response = yield job.create(userID, payload);
         res.status(response.statusCode).json(response.data);
     }
     catch (error) {
@@ -24,6 +26,56 @@ router.post('/jobs', (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 }));
 // Update job
-// Delete job
-// Retrieve job
+router.put('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const payload = req.body;
+        const jobID = req.params.id;
+        const job = new Job();
+        const response = yield job.update(jobID, payload);
+        res.status(response.statusCode).json(response.data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
+}));
 // List jobs
+router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const job = new Job();
+        const response = yield job.fetchMany();
+        res.status(response.statusCode).json(response.data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
+}));
+// Retrieve job
+router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const job = new Job();
+        const response = yield job.fetchOne(id);
+        res.status(response.statusCode).json(response.data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
+}));
+// Delete job
+router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        const job = new Job();
+        const response = yield job.delete(id);
+        res.status(response.statusCode).json(response.data);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
+}));
+/* eslint-disable @typescript-eslint/no-misused-promises */
+export default router;

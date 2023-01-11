@@ -10,10 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import express from 'express';
 import { User } from '../Classes/Users.js';
 const router = express.Router();
+/* eslint-disable @typescript-eslint/no-misused-promises */
 router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     const user = new User();
     const { statusCode, data } = yield user.validate(email, password);
     res.status(statusCode).json(data);
 }));
+/* eslint-disable @typescript-eslint/no-misused-promises */
 export default router;

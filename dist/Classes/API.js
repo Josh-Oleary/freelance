@@ -7,8 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { ObjectID } from "bson";
-import DB from "./db.js";
+import { ObjectID } from 'bson';
+import DB from './db.js';
+/* eslint-disable @typescript-eslint/no-floating-promises */
 class API extends DB {
     constructor(collection) {
         super(collection);
@@ -17,21 +18,13 @@ class API extends DB {
         this.api = this.client.db().collection(this.collection);
         this.collection = collection.toString();
     }
-    create(userID, data) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return {
-                statusCode: 200,
-                data: 'Placeholder'
-            };
-        });
-    }
-    update(userID, data) {
+    update(filterID, data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const id = new ObjectID(userID);
+                const id = new ObjectID(filterID);
                 data.updateAt = new Date().toISOString();
                 const doc = { $set: data };
-                const filter = { _user: id };
+                const filter = { _id: id };
                 yield this.api.updateOne(filter, doc);
                 const response = yield this.api.findOne(filter);
                 return {
@@ -45,6 +38,9 @@ class API extends DB {
                     statusCode: 500,
                     data: error
                 };
+            }
+            finally {
+                this.db.close();
             }
         });
     }
@@ -65,13 +61,16 @@ class API extends DB {
                     data: error
                 };
             }
+            finally {
+                this.db.close();
+            }
         });
     }
     fetchOne(filterID) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const id = new ObjectID(filterID);
-                const filter = { _user: id };
+                const filter = { _id: id };
                 const response = yield this.api.findOne(filter);
                 return {
                     statusCode: 200,
@@ -85,23 +84,26 @@ class API extends DB {
                     data: error
                 };
             }
+            finally {
+                this.db.close();
+            }
         });
     }
     delete(filterID) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const id = new ObjectID(filterID);
-                const doc = { _user: id };
+                const doc = { _id: id };
                 const response = yield this.api.deleteOne(doc);
                 if (response.deletedCount > 0) {
                     return {
                         statusCode: 204,
-                        data: 'Document Deleted'
+                        data: { status: 'Deleted' }
                     };
                 }
                 return {
                     statusCode: 400,
-                    data: 'Delete Operation Failed'
+                    data: { status: 'Delete operation failed' }
                 };
             }
             catch (error) {
@@ -111,7 +113,11 @@ class API extends DB {
                     data: error
                 };
             }
+            finally {
+                this.db.close();
+            }
         });
     }
 }
+/* eslint-disable @typescript-eslint/no-floating-promises */
 export default API;
